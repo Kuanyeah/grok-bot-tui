@@ -8,7 +8,7 @@ export function Picker({agents,client,refreshing=false,onSelect,onRefresh,onAppe
  const {exit}=useApp(),{columns=80,rows=24}=useWindowSize();
  const [selectedId,setSelectedId]=useState(null),[,refresh]=useState(0);
  const items=recentFirst(agents),index=Math.max(0,items.findIndex(a=>a.id===selectedId));
- const selected=items[index],capacity=Math.max(1,Math.floor((rows-9)/4));
+ const selected=items[index],capacity=Math.max(1,Math.floor((rows-4)/4));
  const start=Math.max(0,index-capacity+1),visible=items.slice(start,start+capacity);
  useEffect(()=>{
   let stopped=false,timer;
@@ -32,8 +32,7 @@ export function Picker({agents,client,refreshing=false,onSelect,onRefresh,onAppe
   else if(input==='a')onAppearance?.(selected);
   else if(key.return||key.rightArrow)onSelect(selected);
  });
- return h(Box,{flexDirection:'column',width:columns,height:rows-1},
-  h(Box,{height:3,paddingX:2,alignItems:'center'},h(Text,{bold:true},'Grok Bot')),
+ return h(Box,{flexDirection:'column',width:columns,height:rows-1,paddingTop:1},
   h(Box,{flexDirection:'column',flexGrow:1,paddingX:2,overflow:'hidden'},
    ...visible.map((agent,rowIndex)=>h(Box,{key:agent.id+":"+(start+rowIndex),height:4,flexShrink:0,paddingBottom:1},
     h(Box,{width:3,height:3,justifyContent:'center',flexDirection:'column'},h(Text,{color:botColor(agent)},agent.id===selected?.id?'›':' ')),
