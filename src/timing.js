@@ -1,0 +1,35 @@
+export const DEFAULT_POLL_MS = 1500;
+export const MIN_POLL_MS = 250;
+/** Gap between completed roster polls. listAgents itself takes ~15s on desktop. */
+export const DEFAULT_ROSTER_POLL_MS = 5_000;
+/** Default cap on 1:1 wait-for-reply. Esc still cancels earlier. */
+export const DEFAULT_WAIT_TIMEOUT_MS = 600_000;
+/** Parse `GROK_TUI_POLL_MS`. Invalid or missing values fall back to the default. */
+export function parsePollMs(raw, fallback = DEFAULT_POLL_MS) {
+    if (raw == null || raw.trim() === "")
+        return fallback;
+    const n = Number.parseInt(raw, 10);
+    if (!Number.isFinite(n) || n < MIN_POLL_MS)
+        return fallback;
+    return n;
+}
+/**
+ * Parse `GROK_TUI_WAIT_TIMEOUT_MS`.
+ * - unset/invalid → fallback (default 10 minutes)
+ * - exact `0` → unlimited (returns undefined; Esc still cancels)
+ * - positive integer → that many ms
+ * Fractional or garbage prefixes (`0.5`, `0ms`) are invalid, not unlimited.
+ */
+export function parseWaitTimeoutMs(raw, fallback = DEFAULT_WAIT_TIMEOUT_MS) {
+    if (raw == null || raw.trim() === "")
+        return fallback;
+    const trimmed = raw.trim();
+    if (!/^\d+$/.test(trimmed))
+        return fallback;
+    const n = Number.parseInt(trimmed, 10);
+    if (!Number.isFinite(n) || n < 0)
+        return fallback;
+    if (n === 0)
+        return undefined;
+    return n;
+}
