@@ -12,7 +12,7 @@ import { errorMessage } from "../redact.js";
 import { DEFAULT_ROSTER_POLL_MS } from "../timing.js";
 import { composeInnerHeight, FOOTER_HINT, handleComposeKey, insertAt, layoutCompose, splitLineAtCaret, visibleComposeWindow, } from "./compose.js";
 import { adjustScrollOffset, applyScrollDelta, chromeRows, innerWidth, isFullPictureRun, TRANSCRIPT_JUSTIFY, transcriptInnerHeight, transcriptPadBottom, turnsToRows, visibleTranscript, speakerColor, } from "./layout.js";
-import { IMAGE_CELL_ROWS, imagePlaceholder, imagesFromText } from "./images.js";
+import { IMAGE_CELL_ROWS, IMAGE_CELL_COLS, imagePlaceholder, imagesFromText } from "./images.js";
 import { Picture } from "./Picture.js";
 import { consumeMouseInput, DISABLE_MOUSE, ENABLE_MOUSE, scrollDeltaForButton, WHEEL_LINE_DELTA, } from "./mouse.js";
 import { completeMention, filterMentions, MAX_VISIBLE_MENTIONS, mentionMenuOpen, mentionNames, mentionQuery, visibleMentions, wrapMentionIndex, } from "./mentions.js";
@@ -144,7 +144,11 @@ export function Chat({ client, agent, roster = [], timeoutMs, pollMs = DEFAULT_P
     const { width, height } = termSize(columns, rows);
     const inner = innerWidth(width);
     const composeLaid = layoutCompose(draft.text, draft.caret, inner - 2);
-    const attachmentRows=0;
+    const previewCapacity = Math.max(1, Math.floor((inner + 1) / (IMAGE_CELL_COLS + 1)));
+    const previewStrips = [];
+    for (let i=0; i<attachments.length; i+=previewCapacity) previewStrips.push(attachments.slice(i,i+previewCapacity));
+    const visiblePreviews = previewStrips.slice(-Math.max(1, Math.floor(height / 3 / IMAGE_CELL_ROWS)));
+    const attachmentRows = visiblePreviews.length * IMAGE_CELL_ROWS;
     const textInner=composeInnerHeight(composeLaid.lines.length);
     const composeInner = textInner+attachmentRows;
     const composeView = visibleComposeWindow(composeLaid.lines, composeLaid.line, textInner);
@@ -315,7 +319,7 @@ export function Chat({ client, agent, roster = [], timeoutMs, pollMs = DEFAULT_P
     }, [client, onRoster, pollReady, syncAnsweringLine]);
     const send = useCallback(async (text) => {
         const prompt = text.trim();
-        const images=attachmentsRef.current.filter(image=>!image.marker||text.includes(image.marker));
+        const images=attachmentsRef.current;
         if ((!prompt && !images.length) || statusRef.current.kind === "sending")
             return;
         transcriptRevisionRef.current += 1;
@@ -502,16 +506,15 @@ export function Chat({ client, agent, roster = [], timeoutMs, pollMs = DEFAULT_P
             const parsed=imagesFromText(chunk);
             if(parsed.images.length) {
                 const existing=attachmentsRef.current;
-                const added=parsed.images.filter(image=>!existing.some(old=>old.path===image.path)).map((image,i)=>({...image,marker:`[Image #${existing.length+i+1}]`}));
+                const added=parsed.images.filter(image=>!existing.some(old=>old.path===image.path));
                 setAttachments([...existing,...added]);
-                const insertion=added.map(image=>image.marker).join(' ')+(parsed.text?' '+parsed.text:'')+' ';
-                setDraft(value=>insertAt(value.text,value.caret,insertion));
+                if (parsed.text) setDraft(value=>insertAt(value.text,value.caret,parsed.text));
             } else setDraft(value=>insertAt(value.text,value.caret,chunk));
         }
     });
     const view = useMemo(() => visibleTranscript(allRows, lineBudget, scrollOffset), [allRows, lineBudget, scrollOffset]);
     const canType = status.kind !== "sending" && status.kind !== "loading";
-    setCursorPosition(canType && composeBox.hasMeasured && composeBox.height === composeInner + 2 ? {x:composeBox.left + 4 + stringWidth((composeView.lines[composeView.line] || '').slice(0,composeLaid.col)),y:composeBox.top + 1 + attachmentRows + composeView.line} : undefined);
+    setCursorPosition(canType && composeBox.hasMeasured && composeBox.height === textInner + 2 ? {x:composeBox.left + 4 + stringWidth((composeView.lines[composeView.line] || '').slice(0,composeLaid.col)),y:composeBox.top + 1 + composeView.line} : undefined);
     const busy = status.kind === "sending";
     const composePlaceholder = draft.text.length === 0 ? (busy ? "Sending…" : "Message " + displayName) : null;
     return (_jsxs(Box, { flexDirection: "column", width: width, height: height, overflow: "hidden", children: [_jsxs(Box, {height:5,flexShrink:0,paddingX:2,alignItems:"center",children:[_jsx(Avatar,{agent:liveAgent,width:6,height:3}),_jsx(Box,{paddingLeft:2,children:_jsx(Text,{bold:true,color:themeColor,children:displayName})})]}), _jsx(Box, { flexDirection: "column", justifyContent: TRANSCRIPT_JUSTIFY, paddingX: 2, paddingTop: 1, paddingBottom: padBottom + 1, height: transcriptH, overflow: "hidden", children: _jsxs(Box, { flexDirection: "column", flexShrink: 0, children: [status.kind === "error" ? _jsx(Text, { color: "red", children: status.message }) : null, view.rows.length === 0 && status.kind !== "error" ? (_jsx(Text, { dimColor: true, children: status.kind === "loading" ? "Loading…" : "No messages yet. Type below and press Enter." })) : (_jsxs(_Fragment, { children: [view.clipped ? _jsx(Text, { dimColor: true, children: "\u00B7\u00B7\u00B7" }) : null, renderTranscriptRows(view.rows, inner, themeColor), view.moreBelow ? _jsx(Text, { dimColor: true, children: "\u00B7\u00B7\u00B7" }) : null] })), answeringLine ? (_jsx(Text, { color: "yellow", dimColor: true, wrap: "truncate", children: answeringLine })) : null, menuOpen
@@ -519,12 +522,12 @@ export function Chat({ client, agent, roster = [], timeoutMs, pollMs = DEFAULT_P
                                 const selected = name === mentionMatches[mentionIndex];
                                 return (_jsxs(Text, { inverse: selected, color: selected ? undefined : "yellow", wrap: "truncate", children: [selected ? "› @" : "  @", name] }, name));
                             })
-                            : null] }) }), _jsx(Box, { flexDirection: "column", borderStyle: "round", borderColor: busy ? "yellow" : "gray", borderLeft:false, borderRight:false, paddingX: 2, ref: composeBoxRef, flexShrink: 0, height: composeInner + 2, overflow: "hidden", children: [false ? _jsx(Box,{height:1,flexShrink:0,children:_jsx(Text,{color:themeColor,wrap:"truncate",children:attachments.map((image,i)=>`Image #${i+1}`).join("  ")+"  (Ctrl+X remove)"})}) : null, ...composeView.lines.map((line, i) => {
+                            : null] }) }), ...visiblePreviews.map((images,index) => _jsx(Box,{paddingX:2,height:IMAGE_CELL_ROWS,flexShrink:0,children:_jsx(Picture,{inner,row:{images,align:'start',imageIndex:(previewStrips.length-visiblePreviews.length+index)*previewCapacity}})}, `staged-${index}`)), _jsx(Box, { flexDirection: "column", borderStyle: "round", borderColor: busy ? "yellow" : "gray", borderLeft:false, borderRight:false, paddingX: 2, ref: composeBoxRef, flexShrink: 0, height: textInner + 2, overflow: "hidden", children: [...composeView.lines.map((line, i) => {
                     const onCaret = i === composeView.line;
                     if (!onCaret) {
                         return (_jsx(Text, { wrap: "truncate", children: "  " + (line.length === 0 ? " " : line) }, `c-${i}`));
                     }
                     const cell = splitLineAtCaret(line, composeLaid.col);
                     return (_jsxs(Text, { wrap: "truncate", children: [i === 0 ? "› " : "  ", cell.before, canType ? _jsx(Text, { children: cell.cell }) : _jsx(Text, { dimColor: true, children: cell.cell }), cell.after, composePlaceholder ? _jsx(Text, { dimColor: true, children: composePlaceholder }) : null] }, `c-${i}`));
-                })] }), _jsx(Box, { height: 1, flexShrink: 0, overflow: "hidden", paddingX: 1, children: _jsx(Text, { dimColor: true, children: "Enter send  ·  Shift+Enter newline  ·  ← lobby  ·  Ctrl+C quit" }) })] }));
+                })] }), _jsx(Box, { height: 1, flexShrink: 0, overflow: "hidden", paddingX: 1, children: _jsx(Text, { dimColor: true, children: attachments.length ? `${attachments.length} attached  ·  Ctrl+X remove last  ·  Enter send` : "Enter send  ·  Shift+Enter newline  ·  ← lobby  ·  Ctrl+C quit" }) })] }));
 }

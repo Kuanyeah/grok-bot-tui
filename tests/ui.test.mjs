@@ -4,6 +4,7 @@ import {turnsToRows} from '../src/tui/layout.js';
 import {editShortcut,stringWidth} from '../src/tui/input-editing.js';
 import {layoutCompose} from '../src/tui/compose.js';
 import {avatarPng} from '../src/tui/Avatar.js';
+import {IMAGE_CELL_ROWS} from '../src/tui/images.js';
 import {MockHostClient} from '../src/client/mock.js';
 test('reactions sit unframed below the original message at its right edge',()=>{
  const rows=turnsToRows([{id:'one',role:'user',speaker:'you',text:'Looks good',reactions:[{emoji:'👍'}]}],70,'Ada');
@@ -23,14 +24,14 @@ test('offline gallery includes multiple English bots',async()=>{
 test('image strips precede the caption and remove composer markers',()=>{
  const rows=turnsToRows([{id:'photos',role:'user',text:'[Image #1] image test [Image #2]',images:[{alt:'one.png'},{alt:'two.png'}]}],70,'Ada');
  const pictures=rows.filter(r=>r.kind==='picture');
- assert.equal(pictures.length,8);assert.equal(pictures[0].images.length,2);
+ assert.equal(pictures.length,IMAGE_CELL_ROWS);assert.equal(pictures[0].images.length,2);
  assert.equal(rows[0].kind,'picture');
- assert(rows.findIndex(r=>r.kind==='body')>7);
+ assert(rows.findIndex(r=>r.kind==='body')>=IMAGE_CELL_ROWS);
  assert(!rows.filter(r=>r.kind==='body').some(r=>r.text.includes('[Image #')));
  assert(rows.some(r=>r.kind==='body'&&r.text.includes('image test')));
 });
 test('narrow image strips wrap without losing images',()=>{
- const rows=turnsToRows([{id:'photos',role:'user',text:'',images:[{alt:'one.png'},{alt:'two.png'},{alt:'three.png'}]}],32,'Ada');
+ const rows=turnsToRows([{id:'photos',role:'user',text:'',images:[{alt:'one.png'},{alt:'two.png'},{alt:'three.png'}]}],20,'Ada');
  const strips=rows.filter(r=>r.kind==='picture'&&r.pictureSlot===0);
  assert.equal(strips.length,3);assert.equal(strips.flatMap(r=>r.images).length,3);
  assert.equal(rows.filter(r=>r.kind==='body').length,0);

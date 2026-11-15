@@ -72,7 +72,7 @@ grok bot --agent Ada
 | Exit | Ctrl+C on an empty prompt |
 
 Paste or drag an image file into a terminal that inserts its local path (tested
-with Rex). The TUI inserts an `[Image #N]` marker at the cursor and stages the attachment; Enter uploads it. Clipboard integration
+with Rex). The TUI stages square previews above the composer without adding markers to your text; Enter uploads them. Clipboard integration
 and Option/Command key encoding depend on your terminal.
 
 ## Configuration and limits
