@@ -47,13 +47,13 @@ grok bot --agent Ada
 
 - Assistant messages on the left, your messages in transparent, rounded-outline bubbles on the right.
 - Unframed emoji reactions directly below the corresponding message.
-- Image attachments shown as `Image #1`, `Image #2`; local image bytes are uploaded before sending.
+- Sent images appear as square thumbnails above the message, arranged horizontally and wrapping in narrow windows. Local image bytes are uploaded before sending.
 - Real terminal cursor for IME anchoring, Unicode-aware wrapping and complete-emoji deletion.
 - Persistent per-bot colors and avatars, including pure white (`#FFFFFF`).
 - A short, cached avatar animation when selecting a bot.
 - Bots sorted by their most recently observed assistant reply.
 - English demo with eleven bots/channels and distinct avatar styles.
-- No image downloads for text-only attachment labels; slower polling while idle.
+- Images load in the background with `Image #N` fallback labels; slower polling while idle.
 
 ## Controls
 

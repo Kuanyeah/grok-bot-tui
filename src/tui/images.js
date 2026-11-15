@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 /** Reserved transcript rows per on-disk image. Caps so chat still has room. */
 export const IMAGE_CELL_ROWS = 8;
 /** Max Kitty/half-block width in cells. */
-export const IMAGE_CELL_COLS = 28;
+export const IMAGE_CELL_COLS = 16;
 const IMAGE_EXT_RE = /\.(png|jpe?g|gif|webp|svg)$/i;
 const QUOTED_PATH_RE = /(['"])((?:file:\/\/|\/|~\/)[\s\S]*?)\1/gi;
 const FILE_URL_RE = /file:\/\/\S+/gi;

@@ -1,7 +1,7 @@
 import stringWidth from 'string-width';
 import { userBubble, wrapCells } from './bubbles.js';
 import { MIN_COMPOSE_INNER } from "./compose.js";
-import { IMAGE_CELL_ROWS, imagePlaceholder, imagesFromText, localImagePath, mergeImages, pictureKey } from "./images.js";
+import { IMAGE_CELL_ROWS, IMAGE_CELL_COLS, imagePlaceholder, imagesFromText, localImagePath, mergeImages, pictureKey } from "./images.js";
 export function turnAlign(role) {
     return role === "user" ? "end" : "start";
 }
@@ -154,8 +154,17 @@ export function turnsToRows(turns, width, agentNameOrCtx) {
             });
         }
         const extracted = imagesFromText(turn.text);
-        const bodyText = extracted.text;
         const images = mergeImages(turn.images ?? [], extracted.images);
+        const bodyText = images.length ? extracted.text.replace(/\[Image #\d+\]/g, '').trim() : extracted.text;
+        const perStrip = Math.max(1, Math.floor((paneWidth + 1) / (IMAGE_CELL_COLS + 1)));
+        for (let index = 0; index < images.length; index += perStrip) {
+            const strip = images.slice(index, index + perStrip);
+            for (let slot = 0; slot < IMAGE_CELL_ROWS; slot++) {
+                pending.push({kind:'picture', text:strip.map((_,i)=>`Image #${index+i+1}`).join('  '),
+                    role:turn.role, align, images:strip, image:strip[0],
+                    imageIndex:index, pictureId:pictureKey(turn.id,index), pictureSlot:slot});
+            }
+        }
         if (bodyText.trim().length > 0) {
             for (const line of (turn.role === "user" ? userBubble(bodyText, paneWidth) : wrapText(bodyText, bodyWidth))) {
                 pending.push({
@@ -165,10 +174,6 @@ export function turnsToRows(turns, width, agentNameOrCtx) {
                     align,
                 });
             }
-        }
-        for (const [index, image] of images.entries()) {
-            const label = `Image #${index + 1}`;
-            pending.push({kind:'image',text:align==='end' ? label.padStart(paneWidth) : label,role:turn.role,align,image});
         }
         if (align === "end" && !bodyText.trim()) {
             const padded = alignBlockEnd(pending.map((row) => row.text), paneWidth);
