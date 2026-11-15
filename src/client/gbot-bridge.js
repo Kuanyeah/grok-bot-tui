@@ -1,3 +1,4 @@
+import {rememberImagePath, restoreImagePaths} from './image-paths.js';
 import { connectGateway, gatewayCall } from './vendor/gbot/gateway.js';
 import { isServerBotRefusal, sendServerPrompt } from './server-send.js';
 import { uploadImages } from './upload-images.js';
@@ -40,9 +41,14 @@ export async function openGbotHostClient() {
         source: 'desktop',
         fetch: createBridgeFetch(session),
     });
+    const getTranscript = client.getTranscript.bind(client);
+    client.getTranscript = async (agentId, limit) => restoreImagePaths(agentId,
+        await getTranscript(agentId, limit, {hydrate:false}));
     const send = client.sendPrompt.bind(client);
     client.sendPrompt = async input => {
         const attachments = input.images?.length ? await uploadImages(input.agentId,input.images,input.signal) : {};
+        for (const [index, alias] of (attachments.attachmentPaths || []).entries())
+            rememberImagePath(input.agentId, alias, input.images[index].path);
         return send({...input,...attachments});
     };
     return client;

@@ -53,7 +53,7 @@ grok bot --agent Ada
 - A short, cached avatar animation when selecting a bot.
 - Bots sorted by their most recently observed assistant reply.
 - English demo with eleven bots/channels and distinct avatar styles.
-- Images load in the background with `Image #N` fallback labels; slower polling while idle.
+- Images render from their original local paths. Only path references are saved; deleting a source file removes its preview. Slower polling while idle.
 
 ## Controls
 

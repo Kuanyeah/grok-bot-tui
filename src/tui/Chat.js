@@ -172,23 +172,7 @@ export function Chat({ client, agent, roster = [], timeoutMs, pollMs = DEFAULT_P
     const hydrateGenRef = useRef(0);
     const hydrateInflightRef = useRef(false);
     const hydrateKeyRef = useRef("");
-    const scheduleImageHydrate = useCallback((history) => {
-        if (!client.hydrateTranscript || !transcriptNeedsImageHydrate(history)) return;
-        const key = imageHydrateKey(history);
-        if (hydrateInflightRef.current || hydrateKeyRef.current === key) return;
-        hydrateInflightRef.current = true;
-        hydrateKeyRef.current = key;
-        const generation = hydrateGenRef.current;
-        void client.hydrateTranscript(agentId, history).then(hydrated => {
-            if (generation === hydrateGenRef.current)
-                setTurns(current => mergeImagePathsFrom(hydrated, current));
-        }).catch(() => {
-            // Keep a stable label if a remote attachment cannot be downloaded.
-        }).finally(() => {
-            if (generation === hydrateGenRef.current) hydrateInflightRef.current = false;
-        });
-    }, [client, agentId]);
-    useEffect(() => () => { hydrateGenRef.current += 1; }, [client, agentId]);
+    const scheduleImageHydrate = useCallback(() => {}, []);
     const load = useCallback(async () => {
         transcriptRevisionRef.current += 1;
         const revision = transcriptRevisionRef.current;

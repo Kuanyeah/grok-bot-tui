@@ -22,7 +22,7 @@ test('offline gallery includes multiple English bots',async()=>{
  const bots=await new MockHostClient().listAgents();assert(bots.length>=10);assert(bots.every(bot=>!/[\u4e00-\u9fff]/.test(bot.name)));
 });
 test('image strips precede the caption and remove composer markers',()=>{
- const rows=turnsToRows([{id:'photos',role:'user',text:'[Image #1] image test [Image #2]',images:[{alt:'one.png'},{alt:'two.png'}]}],70,'Ada');
+ const rows=turnsToRows([{id:'photos',role:'user',text:'[Image #1] image test [Image #2]',images:[{path:new URL('../docs/assets/logo.svg',import.meta.url).pathname,alt:'one.png'},{path:new URL('../docs/assets/logo.svg',import.meta.url).pathname,alt:'two.png'}]}],70,'Ada');
  const pictures=rows.filter(r=>r.kind==='picture');
  assert.equal(pictures.length,IMAGE_CELL_ROWS);assert.equal(pictures[0].images.length,2);
  assert.equal(rows[0].kind,'picture');
@@ -31,7 +31,7 @@ test('image strips precede the caption and remove composer markers',()=>{
  assert(rows.some(r=>r.kind==='body'&&r.text.includes('image test')));
 });
 test('narrow image strips wrap without losing images',()=>{
- const rows=turnsToRows([{id:'photos',role:'user',text:'',images:[{alt:'one.png'},{alt:'two.png'},{alt:'three.png'}]}],20,'Ada');
+ const rows=turnsToRows([{id:'photos',role:'user',text:'',images:[{path:new URL('../docs/assets/logo.svg',import.meta.url).pathname,alt:'one.png'},{path:new URL('../docs/assets/logo.svg',import.meta.url).pathname,alt:'two.png'},{path:new URL('../docs/assets/logo.svg',import.meta.url).pathname,alt:'three.png'}]}],20,'Ada');
  const strips=rows.filter(r=>r.kind==='picture'&&r.pictureSlot===0);
  assert.equal(strips.length,3);assert.equal(strips.flatMap(r=>r.images).length,3);
  assert.equal(rows.filter(r=>r.kind==='body').length,0);

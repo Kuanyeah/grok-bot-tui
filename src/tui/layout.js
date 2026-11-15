@@ -154,8 +154,9 @@ export function turnsToRows(turns, width, agentNameOrCtx) {
             });
         }
         const extracted = imagesFromText(turn.text);
-        const images = mergeImages(turn.images ?? [], extracted.images);
-        const bodyText = images.length ? extracted.text.replace(/\[Image #\d+\]/g, '').trim() : extracted.text;
+        const attached = mergeImages(turn.images ?? [], extracted.images);
+        const images = attached.filter(image => localImagePath(image));
+        const bodyText = attached.length ? extracted.text.replace(/\[Image #\d+\]/g, '').trim() : extracted.text;
         const perStrip = Math.max(1, Math.floor((paneWidth + 1) / (IMAGE_CELL_COLS + 1)));
         for (let index = 0; index < images.length; index += perStrip) {
             const strip = images.slice(index, index + perStrip);
