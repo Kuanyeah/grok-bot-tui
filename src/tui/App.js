@@ -32,7 +32,7 @@ function BootScreen({ note }) {
     const {columns,rows}=useWindowSize();
     return _jsxs(Box,{width:columns||80,height:Math.max(11,(rows||24)-1),flexDirection:"column",paddingX:2,children:[
         _jsxs(Box,{height:5,alignItems:"center",children:[
-            _jsx(Avatar,{choice:{shape:"logo",color:"white"},width:6,height:3}),
+            _jsx(Avatar,{choice:{shape:"circle",color:"white"},width:6,height:3}),
             _jsx(Box,{paddingLeft:2,children:_jsx(Text,{bold:true,children:"Grok Bot"})})
         ]}),
         _jsx(Box,{paddingTop:1,paddingLeft:1,children:_jsx(Text,{dimColor:true,children:note})})
