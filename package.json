@@ -34,7 +34,8 @@
     "licenses",
     "LICENSE",
     "README.md",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "fixtures"
   ],
   "overrides": {
     "zod": "^4.6.6"

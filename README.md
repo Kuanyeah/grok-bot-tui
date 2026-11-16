@@ -14,7 +14,9 @@ Both upstream projects are MIT licensed. See [attribution and modification detai
 All screenshots below use English offline fixtures. No real accounts or private conversations are shown.
 
 ![Bot gallery](docs/screenshots/bots.png)
-![Conversation](docs/screenshots/chat.png)
+![Conversation with inline image thumbnails](docs/screenshots/chat.png)
+![Staged image previews above the composer](docs/screenshots/attachments.png)
+![Avatar and color settings](docs/screenshots/appearance.png)
 
 ## Install
 

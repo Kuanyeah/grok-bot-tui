@@ -10,17 +10,17 @@ export const CHIEF_ID = "44444444-4444-4444-8444-444444444444";
 export const PROJECT_X_ID = "55555555-5555-4555-8555-555555555555";
 /** Checked-in PNG so `npm start -- --mock` can draw a real picture in Ghostty. */
 export function mockPhotoPath() {
-    return fileURLToPath(new URL("../../fixtures/mock-photo.png", import.meta.url));
+    return fileURLToPath(new URL("../../fixtures/circle-study.png", import.meta.url));
 }
 function defaultTranscripts(agents) {
  const bot=agents.find(a=>a.id===ADA_ID)||agents[0];
  if(!bot)return {};
  return {...Object.fromEntries(agents.filter(a=>a.id!==bot.id).map(a=>[a.id,[{id:'welcome-'+a.id,role:'assistant',speaker:a.name,text:`Hi, I'm ${a.name}. This is an offline demo. Choose a topic and let's explore it together.`,timestampMs:1}]])),[bot.id]:[
   {id:'demo-1',role:'assistant',speaker:bot.name,text:"Hi! I can help you plan, write, and explore ideas. What are we working on today?",timestampMs:1},
-  {id:'demo-2',role:'user',speaker:'you',text:"Help me plan a small creative project for the weekend.",timestampMs:2},
-  {id:'demo-3',role:'assistant',speaker:bot.name,text:"Let's make a tiny photo journal.\n\n1. Pick a theme: light, color, or everyday details.\n2. Take five photos on a short walk.\n3. Add one sentence to each image.\n\nKeep it simple: one afternoon, one story.",timestampMs:3},
-  {id:'demo-4',role:'user',speaker:'you',text:"Here is my first photo. What do you think?",images:[{alt:'demo.png'}],reactions:[{emoji:'👍',by:'Ada'}],timestampMs:4},
-  {id:'demo-5',role:'assistant',speaker:bot.name,text:"A lovely start! Try pairing it with a short caption about what caught your eye. ✨\n\nThis is an offline demo conversation. No messages are sent to a live bot.",timestampMs:5}
+  {id:'demo-2',role:'user',speaker:'you',text:"Help me design a friendly identity for a small creative studio.",timestampMs:2},
+  {id:'demo-3',role:'assistant',speaker:bot.name,text:"Let's build a tiny visual identity.\n\n1. Start with one simple, memorable silhouette.\n2. Pick a signature color and a neutral alternative.\n3. Check that the eyes remain clear at small sizes.\n\nKeep it warm, playful, and easy to recognize.",timestampMs:3},
+  {id:'demo-4',role:'user',speaker:'you',text:"Here are two directions. Which one feels more playful?",images:[{path:mockPhotoPath(),alt:'circle-study.png'},{path:fileURLToPath(new URL('../../fixtures/capsule-study.png',import.meta.url)),alt:'capsule-study.png'}],reactions:[{emoji:'👍',by:'Ada'}],timestampMs:4},
+  {id:'demo-5',role:'assistant',speaker:bot.name,text:"The pink capsule feels more playful. The white circle is a quieter alternative. ✨\n\nUse the capsule for the main identity, and keep the circle for a neutral theme.\n\nThis is an offline demo conversation. No messages are sent to a live bot.",timestampMs:5}
  ]};
 }
 const DEFAULT_AGENTS = [
