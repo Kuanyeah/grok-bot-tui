@@ -1,8 +1,6 @@
-<p align="center"><img src="docs/assets/logo.svg" width="112" alt="Grok Bot TUI mascot"></p>
+# Pebble Chat
 
-# Grok Bot TUI
-
-An unofficial terminal client for Grok Bot, with a clean composer, right-aligned
+An unofficial Grok Bot UI for your terminal, with a clean composer, right-aligned
 user bubbles, image attachments, reactions and colorful animated bot avatars.
 
 Built on [smarzban/grokbot-tui](https://github.com/smarzban/grokbot-tui) and the
@@ -14,8 +12,7 @@ Both upstream projects are MIT licensed. See [attribution and modification detai
 All screenshots below use English offline fixtures. No real accounts or private conversations are shown.
 
 ![Bot gallery](docs/screenshots/bots.png)
-![Conversation with inline image thumbnails](docs/screenshots/chat.png)
-![Staged image previews above the composer](docs/screenshots/attachments.png)
+![Conversation](docs/screenshots/chat.png)
 ![Avatar and color settings](docs/screenshots/appearance.png)
 
 ## Install
@@ -24,8 +21,8 @@ Requires Node.js 22 or newer. Desktop authentication currently targets macOS wit
 the Grok Bot desktop app installed and signed in. The offline demo does not need an account.
 
 ```sh
-git clone https://github.com/Kuanyeah/grok-bot-tui.git
-cd grok-bot-tui
+git clone https://github.com/Kuanyeah/pebble-chat.git
+cd pebble-chat
 npm ci
 npm start -- --mock
 ```

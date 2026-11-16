@@ -10,17 +10,19 @@ export const CHIEF_ID = "44444444-4444-4444-8444-444444444444";
 export const PROJECT_X_ID = "55555555-5555-4555-8555-555555555555";
 /** Checked-in PNG so `npm start -- --mock` can draw a real picture in Ghostty. */
 export function mockPhotoPath() {
-    return fileURLToPath(new URL("../../fixtures/circle-study.png", import.meta.url));
+    return fileURLToPath(new URL("../../fixtures/blue-swatch.png", import.meta.url));
 }
 function defaultTranscripts(agents) {
  const bot=agents.find(a=>a.id===ADA_ID)||agents[0];
  if(!bot)return {};
  return {...Object.fromEntries(agents.filter(a=>a.id!==bot.id).map(a=>[a.id,[{id:'welcome-'+a.id,role:'assistant',speaker:a.name,text:`Hi, I'm ${a.name}. This is an offline demo. Choose a topic and let's explore it together.`,timestampMs:1}]])),[bot.id]:[
-  {id:'demo-1',role:'assistant',speaker:bot.name,text:"Hi! I can help you plan, write, and explore ideas. What are we working on today?",timestampMs:1},
-  {id:'demo-2',role:'user',speaker:'you',text:"Help me design a friendly identity for a small creative studio.",timestampMs:2},
-  {id:'demo-3',role:'assistant',speaker:bot.name,text:"Let's build a tiny visual identity.\n\n1. Start with one simple, memorable silhouette.\n2. Pick a signature color and a neutral alternative.\n3. Check that the eyes remain clear at small sizes.\n\nKeep it warm, playful, and easy to recognize.",timestampMs:3},
-  {id:'demo-4',role:'user',speaker:'you',text:"Here are two directions. Which one feels more playful?",images:[{path:mockPhotoPath(),alt:'circle-study.png'},{path:fileURLToPath(new URL('../../fixtures/capsule-study.png',import.meta.url)),alt:'capsule-study.png'}],reactions:[{emoji:'👍',by:'Ada'}],timestampMs:4},
-  {id:'demo-5',role:'assistant',speaker:bot.name,text:"The pink capsule feels more playful. The white circle is a quieter alternative. ✨\n\nUse the capsule for the main identity, and keep the circle for a neutral theme.\n\nThis is an offline demo conversation. No messages are sent to a live bot.",timestampMs:5}
+  {id:'demo-1',role:'user',speaker:'you',text:"Help me plan a relaxing Sunday afternoon.",timestampMs:1},
+  {id:'demo-2',role:'assistant',speaker:bot.name,text:"Let's keep it simple:\n\n1. Take a short walk somewhere green.\n2. Stop for coffee and bring a book.\n3. Leave an hour free, with nothing planned.",timestampMs:2},
+  {id:'demo-3',role:'user',speaker:'you',text:"That sounds good. What if it rains?",timestampMs:3},
+  {id:'demo-4',role:'assistant',speaker:bot.name,text:"Swap the walk for a small museum or a quiet bookstore. Keep the coffee, the book, and the unplanned hour.\n\nThe goal is to feel rested, not to finish a checklist.",timestampMs:4},
+  {id:'demo-5',role:'user',speaker:'you',text:"Perfect. A bookstore and coffee it is.",reactions:[{emoji:'👍',by:'Ada'}],timestampMs:5},
+  {id:'demo-6',role:'assistant',speaker:bot.name,text:"Enjoy your slow afternoon! ☕",timestampMs:6}
+
  ]};
 }
 const DEFAULT_AGENTS = [

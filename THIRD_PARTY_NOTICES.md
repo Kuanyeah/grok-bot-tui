@@ -36,8 +36,8 @@ input cursor. The dependency's own license is retained by npm.
 UI interaction conventions are inspired by Claude Code. No Claude Code or Codex
 source code, binaries, branding assets, or dependencies are included.
 
-## Project mascot
+## Terminal avatars
 
-The project mascot and terminal avatar artwork are independently drawn, inspired by
+The terminal avatar artwork is independently drawn, inspired by
 the Grok Bot visual identity (https://x.ai/bot). They are not extracted official assets.
 Grok Bot and xAI names/marks belong to their respective owners; this project is unaffiliated.
